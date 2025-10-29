@@ -2,11 +2,11 @@
 
 export default function Home() {
   const ranking = [
-    { id: 1, name: "cole palmer", rank: "Esmeralda II", winRate: 71.4 },
-    { id: 2, name: "Ojuara", rank: "Esmeralda III", winRate: 75 },
-    { id: 3, name: "JogadorDoMid", rank: "Esmeralda III", winRate: 38.5 },
-    { id: 4, name: "Vashtanerada", rank: "Esmeralda IV", winRate: 77.8 },
-    { id: 5, name: "pelicano raivoso", rank: "Platina III", winRate: 50 },
+    { id: 1, name: "Vashtanerada", rank: "Esmeralda I", winRate: 68.3 },
+    { id: 2, name: "JogadorDoMid", rank: "Esmeralda I", winRate: 50 },
+    { id: 3, name: "cole palmer", rank: "Esmeralda II", winRate: 52 },
+    { id: 4, name: "Ojuara", rank: "Esmeralda IV", winRate: 36.4 },
+    { id: 5, name: "pelicano raivoso", rank: "Platina II", winRate: 60 },
   ];
 
   return (
