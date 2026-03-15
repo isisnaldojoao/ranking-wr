@@ -20,8 +20,8 @@ export async function POST(req: NextRequest) {
     fs.writeFileSync(tempPath, buffer);
 
     const workbook = XLSX.readFile(tempPath);
-    
-    // Logic from import_data.js
+
+    // Logic from import_data.j
     const dadosSheet = workbook.Sheets['Dados'];
     if (!dadosSheet) throw new Error("Sheet 'Dados' not found");
     const playersBase = XLSX.utils.sheet_to_json(dadosSheet) as any[];
@@ -93,7 +93,7 @@ export async function POST(req: NextRequest) {
 
     const outputPath = path.join(process.cwd(), "src", "data", "data.json");
     fs.writeFileSync(outputPath, JSON.stringify(players, null, 2));
-    
+
     // Clean up
     fs.unlinkSync(tempPath);
 
