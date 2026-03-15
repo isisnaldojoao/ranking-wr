@@ -1,0 +1,353 @@
+[
+  {
+    "id": 1,
+    "name": "DAVID",
+    "rank": "Diamante I",
+    "matches": 157,
+    "winRate": 53.5,
+    "stats": {
+      "mvp": 12,
+      "s": 7,
+      "a": 19,
+      "lendario": 3,
+      "penta": 0,
+      "quadra": 0,
+      "triple": 7,
+      "firstBlood": 9
+    },
+    "mainChampion": {
+      "name": "Irelia",
+      "winRate": "63,9%"
+    },
+    "allChampions": [
+      {
+        "name": "Irelia",
+        "winRate": "63.9%",
+        "level": 8
+      },
+      {
+        "name": "Heimerdiger",
+        "winRate": "55.2%",
+        "level": 8
+      },
+      {
+        "name": "Akali",
+        "winRate": "48.9%",
+        "level": 8
+      },
+      {
+        "name": "Kalista",
+        "winRate": "60.2%",
+        "level": 6
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "MATHEUS",
+    "rank": "Diamante II",
+    "matches": 180,
+    "winRate": 51.1,
+    "stats": {
+      "mvp": 15,
+      "s": 18,
+      "a": 20,
+      "lendario": 3,
+      "penta": 0,
+      "quadra": 2,
+      "triple": 6,
+      "firstBlood": 9
+    },
+    "mainChampion": {
+      "name": "Braum",
+      "winRate": "61,5%"
+    },
+    "allChampions": [
+      {
+        "name": "Voliber",
+        "winRate": "52.6%",
+        "level": 10
+      },
+      {
+        "name": "Warwick",
+        "winRate": "52%",
+        "level": 10
+      },
+      {
+        "name": "Braum",
+        "winRate": "61.5%",
+        "level": 9
+      },
+      {
+        "name": "Blitzcrank",
+        "winRate": "56.7%",
+        "level": 9
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "name": "ISISNALDO",
+    "rank": "Diamante II",
+    "matches": 186,
+    "winRate": 48.9,
+    "stats": {
+      "mvp": 20,
+      "s": 19,
+      "a": 28,
+      "lendario": 12,
+      "penta": 2,
+      "quadra": 5,
+      "triple": 34,
+      "firstBlood": 13
+    },
+    "mainChampion": {
+      "name": "Ryze",
+      "winRate": "83,3%"
+    },
+    "allChampions": [
+      {
+        "name": "Pantheon",
+        "winRate": "60%",
+        "level": 10
+      },
+      {
+        "name": "Viego",
+        "winRate": "58.3%",
+        "level": 10
+      },
+      {
+        "name": "Poppy",
+        "winRate": "33.3%",
+        "level": 10
+      },
+      {
+        "name": "Ryze",
+        "winRate": "83.3%",
+        "level": 8
+      },
+      {
+        "name": "Ezreal",
+        "winRate": "71.4%",
+        "level": 8
+      },
+      {
+        "name": "Smolder",
+        "winRate": "64.3%",
+        "level": 8
+      },
+      {
+        "name": "Akali",
+        "winRate": "60%",
+        "level": 8
+      },
+      {
+        "name": "Ashe",
+        "winRate": "55.5%",
+        "level": 8
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "name": "KLEBSON",
+    "rank": "Diamante III",
+    "matches": 195,
+    "winRate": 50.8,
+    "stats": {
+      "mvp": 2,
+      "s": 7,
+      "a": 12,
+      "lendario": 2,
+      "penta": 0,
+      "quadra": 0,
+      "triple": 6,
+      "firstBlood": 16
+    },
+    "mainChampion": {
+      "name": "Graves",
+      "winRate": "65,4%"
+    },
+    "allChampions": [
+      {
+        "name": "Swain",
+        "winRate": "58.2%",
+        "level": 8
+      },
+      {
+        "name": "Rumble",
+        "winRate": "51.2%",
+        "level": 8
+      },
+      {
+        "name": "Graves",
+        "winRate": "65.4%",
+        "level": 4
+      },
+      {
+        "name": "Leona",
+        "winRate": "0%",
+        "level": 4
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "name": "AUGUSTO",
+    "rank": "Diamante IV",
+    "matches": 228,
+    "winRate": 44.7,
+    "stats": {
+      "mvp": 9,
+      "s": 6,
+      "a": 13,
+      "lendario": 0,
+      "penta": 0,
+      "quadra": 0,
+      "triple": 4,
+      "firstBlood": 21
+    },
+    "mainChampion": {
+      "name": "Smolder",
+      "winRate": "80%"
+    },
+    "allChampions": [
+      {
+        "name": "Sena",
+        "winRate": "75%",
+        "level": 11
+      },
+      {
+        "name": "Lux",
+        "winRate": "57.1%",
+        "level": 11
+      },
+      {
+        "name": "Lulu",
+        "winRate": "50%",
+        "level": 11
+      },
+      {
+        "name": "Veighar",
+        "winRate": "69.2%",
+        "level": 10
+      },
+      {
+        "name": "Ziggs",
+        "winRate": "62.5%",
+        "level": 10
+      },
+      {
+        "name": "Yone",
+        "winRate": "60%",
+        "level": 10
+      },
+      {
+        "name": "Ysauo",
+        "winRate": "60%",
+        "level": 10
+      },
+      {
+        "name": "Ekko",
+        "winRate": "50%",
+        "level": 10
+      },
+      {
+        "name": "Darius",
+        "winRate": "53.3%",
+        "level": 8
+      },
+      {
+        "name": "Graves",
+        "winRate": "33.3%",
+        "level": 8
+      },
+      {
+        "name": "Smolder",
+        "winRate": "80%",
+        "level": 6
+      },
+      {
+        "name": "Ezreal",
+        "winRate": "60%",
+        "level": 6
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "name": "DESLEY",
+    "rank": "Esmaral I",
+    "matches": 62,
+    "winRate": 56.5,
+    "stats": {
+      "mvp": 8,
+      "s": 6,
+      "a": 6,
+      "lendario": 4,
+      "penta": 0,
+      "quadra": 0,
+      "triple": 14,
+      "firstBlood": 7
+    },
+    "mainChampion": {
+      "name": "Vex",
+      "winRate": "100%"
+    },
+    "allChampions": [
+      {
+        "name": "Miss Fortune",
+        "winRate": "53.8%",
+        "level": 8
+      },
+      {
+        "name": "Vex",
+        "winRate": "100%",
+        "level": 7
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "name": "MARCELO",
+    "rank": "Esmaral II",
+    "matches": 77,
+    "winRate": 53.2,
+    "stats": {
+      "mvp": 5,
+      "s": 11,
+      "a": 14,
+      "lendario": 5,
+      "penta": 0,
+      "quadra": 2,
+      "triple": 8,
+      "firstBlood": 5
+    },
+    "mainChampion": {
+      "name": "Amumu",
+      "winRate": "66,7%"
+    },
+    "allChampions": [
+      {
+        "name": "Galio",
+        "winRate": "58.3%",
+        "level": 6
+      },
+      {
+        "name": "Ahri",
+        "winRate": "53.8%",
+        "level": 6
+      },
+      {
+        "name": "Leona",
+        "winRate": "55.5%",
+        "level": 3
+      },
+      {
+        "name": "Amumu",
+        "winRate": "66.7%",
+        "level": 2
+      }
+    ]
+  }
+]
