@@ -21,13 +21,36 @@ export async function POST(req: NextRequest) {
 
     const workbook = XLSX.readFile(tempPath);
 
-    // Logic from import_data.j
+    interface ExcelPlayer {
+      Jogador: string;
+      Rank: string;
+      partidas: number;
+      'Taxa de vitorias': number;
+      MVP?: number;
+      S?: number;
+      A?: number;
+      Lendário?: number;
+      Penta?: number;
+      Quadra?: number;
+      Triple?: number;
+      'First Blood'?: number;
+      Campeão: string;
+    }
+
+    interface ExcelChampion {
+      Jogador: string;
+      Campeão: string;
+      'Taxa (%)': number;
+      Nivel?: number;
+    }
+
+    // Logic from import_data.js
     const dadosSheet = workbook.Sheets['Dados'];
     if (!dadosSheet) throw new Error("Sheet 'Dados' not found");
-    const playersBase = XLSX.utils.sheet_to_json(dadosSheet) as any[];
+    const playersBase = XLSX.utils.sheet_to_json(dadosSheet) as ExcelPlayer[];
 
     const rotasSheet = workbook.Sheets['Rotas&Campeões'];
-    const championList = rotasSheet ? XLSX.utils.sheet_to_json(rotasSheet) as any[] : [];
+    const championList = rotasSheet ? XLSX.utils.sheet_to_json(rotasSheet) as ExcelChampion[] : [];
 
     const players = playersBase.map((p, index) => {
       const playerChamps = championList
@@ -98,8 +121,10 @@ export async function POST(req: NextRequest) {
     fs.unlinkSync(tempPath);
 
     return NextResponse.json({ message: "File processed successfully", count: players.length });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Upload error:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    const errorMessage = error instanceof Error ? error.message : "Erro desconhecido";
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
+

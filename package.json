@@ -12,12 +12,9 @@
     "next": "15.5.6",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-<<<<<<< HEAD
     "xlsx": "^0.18.5"
-=======
-    "next": "15.5.9"
->>>>>>> be955f9280377180e34e96e38ea032eb5e868cdd
   },
+
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",

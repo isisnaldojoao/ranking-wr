@@ -30,7 +30,7 @@ export default function AdminPage() {
       } else {
         setStatus({ type: "error", message: data.error || "Erro ao processar ficheiro." });
       }
-    } catch (err) {
+    } catch {
       setStatus({ type: "error", message: "Erro de conexão com o servidor." });
     } finally {
       setLoading(false);
@@ -41,7 +41,7 @@ export default function AdminPage() {
     <main className="min-h-screen bg-[#0a0f16] text-white flex items-center justify-center p-6">
       <div className="w-full max-w-md bg-white/5 border border-white/10 rounded-2xl p-8 shadow-2xl">
         <h1 className="text-2xl font-black mb-2 tracking-tight">PAINEL DE CONTROLE</h1>
-        <p className="text-gray-400 text-sm mb-8 italic">Selecione o arquivo "WILD RIFT.xlsx" para atualizar o ranking.</p>
+        <p className="text-gray-400 text-sm mb-8 italic">Selecione o arquivo &quot;WILD RIFT.xlsx&quot; para atualizar o ranking.</p>
 
         <div className="space-y-6">
           <div className="flex flex-col gap-2">
