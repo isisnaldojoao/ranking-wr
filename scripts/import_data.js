@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const EXCEL_PATH = 'C:\\Users\\isisn\\Downloads\\WILD RIFT.xlsx';
-const OUTPUT_PATH = path.join(__dirname, '..', 'src', 'data', 'data.json');
+const OUTPUT_PATH = path.join(__dirname, '..', 'public', 'data', 'data.json');
 
 try {
   const workbook = XLSX.readFile(EXCEL_PATH);

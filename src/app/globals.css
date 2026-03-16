@@ -1,58 +1,59 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0a0e1a;
+  --foreground: #ffffff;
+  --op-blue: #1c253d;
+  --op-border: #232c45;
+  --op-accent: #5383e8;
+  --op-gold: #cba864;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
 @layer utilities {
-  .glass {
-    @apply backdrop-blur-xl bg-white/5 border border-white/10;
+  .glass-op {
+    @apply backdrop-blur-md bg-white/[0.03] border border-white/10;
   }
   
-  .glow-indigo {
-    box-shadow: 0 0 20px -5px rgba(129, 140, 248, 0.3);
-  }
-  
-  .glow-yellow {
-    box-shadow: 0 0 25px -5px rgba(250, 204, 21, 0.4);
+  .card-op {
+    @apply bg-[#1c253d] border border-[#232c45] rounded-xl;
   }
 
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none;
+  .text-op-blue {
+    color: #5383e8;
   }
 
-  .text-shadow-glow {
-    text-shadow: 0 0 10px rgba(129, 140, 248, 0.5);
+  .bg-op-blue {
+    background-color: #5383e8;
+  }
+
+  .scrollbar-op::-webkit-scrollbar {
+    width: 6px;
+  }
+  .scrollbar-op::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scrollbar-op::-webkit-scrollbar-thumb {
+    background: #232c45;
+    border-radius: 10px;
   }
 }
 
-@keyframes pulse-slow {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+@keyframes slide-up {
+  from { transform: translateY(10px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
-.animate-pulse-slow {
-  animation: pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+.animate-slide-up {
+  animation: slide-up 0.4s ease-out forwards;
 }
-

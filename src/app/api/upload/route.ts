@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import * as XLSX from "xlsx";
 import fs from "fs";
 import path from "path";
+import os from "os";
 
 export async function POST(req: NextRequest) {
   try {
@@ -12,15 +13,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
     }
 
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-
-    // Save temporary file to process with XLSX
-    const tempPath = path.join(process.cwd(), "tmp_upload.xlsx");
-    fs.writeFileSync(tempPath, buffer);
-
-    const workbook = XLSX.readFile(tempPath);
-
+    console.log("Starting file processing...");
     interface ExcelPlayer {
       Jogador: string;
       Rank: string;
@@ -44,13 +37,24 @@ export async function POST(req: NextRequest) {
       Nivel?: number;
     }
 
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+
+    console.log("Reading workbook from buffer...");
+    const workbook = XLSX.read(buffer, { type: 'buffer' });
+
     // Logic from import_data.js
     const dadosSheet = workbook.Sheets['Dados'];
-    if (!dadosSheet) throw new Error("Sheet 'Dados' not found");
+    if (!dadosSheet) {
+      console.error("Sheet 'Dados' not found in workbook. Available sheets:", workbook.SheetNames);
+      throw new Error("Planilha 'Dados' não encontrada no arquivo.");
+    }
     const playersBase = XLSX.utils.sheet_to_json(dadosSheet) as ExcelPlayer[];
+    console.log(`Found ${playersBase.length} players in 'Dados'`);
 
     const rotasSheet = workbook.Sheets['Rotas&Campeões'];
     const championList = rotasSheet ? XLSX.utils.sheet_to_json(rotasSheet) as ExcelChampion[] : [];
+    console.log(`Found ${championList.length} champions in 'Rotas&Campeões'`);
 
     const players = playersBase.map((p, index) => {
       const playerChamps = championList
@@ -61,7 +65,7 @@ export async function POST(req: NextRequest) {
           level: c.Nivel || '?'
         }))
         .sort((a, b) => {
-          if (b.level !== a.level) return (b.level as number) - (a.level as number);
+          if (b.level !== a.level) return (Number(b.level) || 0) - (Number(a.level) || 0);
           return parseFloat(b.winRate) - parseFloat(a.winRate);
         });
 
@@ -69,17 +73,17 @@ export async function POST(req: NextRequest) {
         id: index + 1,
         name: p.Jogador,
         rank: p.Rank,
-        matches: p.partidas,
-        winRate: Math.round(p['Taxa de vitorias'] * 1000) / 10,
+        matches: Number(p.partidas) || 0,
+        winRate: Math.round((Number(p['Taxa de vitorias']) || 0) * 1000) / 10,
         stats: {
-          mvp: p.MVP || 0,
-          s: p.S || 0,
-          a: p.A || 0,
-          lendario: p.Lendário || 0,
-          penta: p.Penta || 0,
-          quadra: p.Quadra || 0,
-          triple: p.Triple || 0,
-          firstBlood: p['First Blood'] || 0
+          mvp: Number(p.MVP) || 0,
+          s: Number(p.S) || 0,
+          a: Number(p.A) || 0,
+          lendario: Number(p.Lendário) || 0,
+          penta: Number(p.Penta) || 0,
+          quadra: Number(p.Quadra) || 0,
+          triple: Number(p.Triple) || 0,
+          firstBlood: Number(p['First Blood']) || 0
         },
         mainChampion: {
           name: p['Campeão']?.split(' - ')[0] || 'Unknown',
@@ -97,6 +101,7 @@ export async function POST(req: NextRequest) {
     };
 
     const getRankValue = (rank: string) => {
+      if (!rank) return 0;
       if (rankOrder[rank]) return rankOrder[rank];
       for (const key in rankOrder) {
         if (rank.startsWith(key)) return rankOrder[key];
@@ -114,17 +119,28 @@ export async function POST(req: NextRequest) {
 
     players.forEach((p, i) => p.id = i + 1);
 
-    const outputPath = path.join(process.cwd(), "src", "data", "data.json");
+    const outputPath = path.join(process.cwd(), "public", "data", "data.json");
+    console.log("Saving processed data to:", outputPath);
+    
+    // Ensure the directory exists (just in case)
+    const outputDir = path.dirname(outputPath);
+    if (!fs.existsSync(outputDir)) {
+      console.log("Creating output directory:", outputDir);
+      fs.mkdirSync(outputDir, { recursive: true });
+    }
+
     fs.writeFileSync(outputPath, JSON.stringify(players, null, 2));
 
-    // Clean up
-    fs.unlinkSync(tempPath);
-
+    console.log("Upload success!");
     return NextResponse.json({ message: "File processed successfully", count: players.length });
   } catch (error: unknown) {
-    console.error("Upload error:", error);
+    console.error("Upload error detail:", error);
     const errorMessage = error instanceof Error ? error.message : "Erro desconhecido";
-    return NextResponse.json({ error: errorMessage }, { status: 500 });
+    const errorStack = error instanceof Error ? error.stack : undefined;
+    return NextResponse.json({ 
+      error: errorMessage, 
+      stack: process.env.NODE_ENV === 'development' ? errorStack : undefined 
+    }, { status: 500 });
   }
 }
 
