@@ -65,7 +65,13 @@ export default function AdminPage() {
     formData.append("file", file);
     try {
       const res = await fetch("/api/upload", { method: "POST", body: formData });
-      const data = await res.json();
+      let data;
+      try {
+        data = await res.json();
+      } catch {
+        data = { error: "Erro interno do servidor (Resposta não-JSON)" };
+      }
+
       if (res.ok) {
         setStatus({ type: "success", message: `Sucesso! Planilha importada.` });
         setShowSuccess(true);
@@ -73,10 +79,11 @@ export default function AdminPage() {
           window.location.reload();
         }, 2000);
       } else {
-        setStatus({ type: "error", message: data.error || "Erro ao processar." });
+        setStatus({ type: "error", message: data.error || `Erro ${res.status}: Problema ao processar.` });
       }
-    } catch {
-      setStatus({ type: "error", message: "Erro de conexão." });
+    } catch (err) {
+      console.error("Fetch error:", err);
+      setStatus({ type: "error", message: "Erro de conexão ou erro no servidor." });
     } finally {
       setLoading(false);
     }

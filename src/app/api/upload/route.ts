@@ -7,9 +7,13 @@ export async function POST(req: NextRequest) {
     const formData = await req.formData();
     const file = formData.get("file") as File;
 
-    if (!process.env.KV_REST_API_URL || !process.env.KV_REST_API_TOKEN) {
+    const kvUrl = process.env.KV_REST_API_URL;
+    const kvToken = process.env.KV_REST_API_TOKEN;
+
+    if (!kvUrl || !kvToken) {
+      console.error("Missing KV Environment Variables:", { kvUrl: !!kvUrl, kvToken: !!kvToken });
       return NextResponse.json({
-        error: "Vercel KV não configurado!!!XD Por favor, conecte o Storage KV no painel da Vercel para que o upload funcione em produção."
+        error: "Vercel KV não configurado no seu projeto. No painel da Vercel, vá em 'Storage', crie um banco 'KV' e clique em 'Connect'."
       }, { status: 500 });
     }
 
