@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
 
     if (!process.env.KV_REST_API_URL || !process.env.KV_REST_API_TOKEN) {
       return NextResponse.json({
-        error: "Vercel KV não configurado!!! Por favor, conecte o Storage KV no painel da Vercel para que o upload funcione em produção."
+        error: "Vercel KV não configurado!!!XD Por favor, conecte o Storage KV no painel da Vercel para que o upload funcione em produção."
       }, { status: 500 });
     }
 
