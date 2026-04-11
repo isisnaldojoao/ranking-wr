@@ -301,11 +301,4 @@ function StatItem({ label, value, color }: { label: string, value: number, color
   );
 }
 
-function BadgeLarge({ label, count, color }: { label: string, count: number, color: string }) {
-  return (
-    <div className={`${color} p-4 rounded-xl flex flex-col items-center justify-center min-w-[80px]`}>
-      <span className="text-[8px] font-bold uppercase tracking-widest text-white/40 mb-1">{label}</span>
-      <span className="text-2xl font-bold text-white">{count || 0}</span>
-    </div>
-  );
-}
+

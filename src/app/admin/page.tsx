@@ -177,7 +177,7 @@ export default function AdminPage() {
              <div className="space-y-1">
                <p className="text-[9px] font-bold text-zinc-600 uppercase tracking-widest leading-relaxed">
                  Edite os campos diretamente na tabela abaixo.<br/>
-                 As alterações são salvas apenas ao clicar no botão "Salvar".
+                 As alterações são salvas apenas ao clicar no botão &quot;Salvar&quot;.
                </p>
              </div>
           </section>
