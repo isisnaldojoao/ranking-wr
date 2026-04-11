@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { kv } from "@vercel/kv";
+import { getRedisClient } from "@/lib/redis";
 import * as XLSX from "xlsx";
 
 export async function POST(req: NextRequest) {
@@ -7,13 +7,12 @@ export async function POST(req: NextRequest) {
     const formData = await req.formData();
     const file = formData.get("file") as File;
 
-    const kvUrl = process.env.KV_REST_API_URL;
-    const kvToken = process.env.KV_REST_API_TOKEN;
+    const redisUrl = process.env.REDIS_URL;
 
-    if (!kvUrl || !kvToken) {
-      console.error("Missing KV Environment Variables:", { kvUrl: !!kvUrl, kvToken: !!kvToken });
+    if (!redisUrl) {
+      console.error("Missing REDIS_URL Environment Variable");
       return NextResponse.json({
-        error: "Vercel KV não configurado no seu projeto. No painel da Vercel, vá em 'Storage', crie um banco 'KV' e clique em 'Connect'."
+        error: "Redis não configurado no seu projeto. No painel da Vercel, conecte o Storage do tipo Redis."
       }, { status: 500 });
     }
 
@@ -127,9 +126,10 @@ export async function POST(req: NextRequest) {
 
     players.forEach((p, i) => p.id = i + 1);
 
-    // Save to Vercel KV instead of file
-    console.log("Saving processed data to Vercel KV...");
-    await kv.set("ranking_data", players);
+    // Save to Redis instead of KV
+    console.log("Saving processed data to Redis...");
+    const redis = await getRedisClient();
+    await redis.set("ranking_data", JSON.stringify(players));
 
     console.log("Upload success!");
     return NextResponse.json({ message: "File processed successfully", count: players.length });

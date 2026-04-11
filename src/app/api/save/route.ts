@@ -1,18 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
-import { kv } from "@vercel/kv";
+import { getRedisClient } from "@/lib/redis";
 
 export async function POST(req: NextRequest) {
   try {
     const data = await req.json();
 
-    if (!process.env.KV_REST_API_URL || !process.env.KV_REST_API_TOKEN) {
+    if (!process.env.REDIS_URL) {
       return NextResponse.json({ 
-        error: "Vercel KV não configurado. Por favor, conecte o Storage KV no painel da Vercel." 
+        error: "Redis não configurado. Por favor, conecte o Storage Redis no painel da Vercel." 
       }, { status: 500 });
     }
 
-    // Save to Vercel KV instead of file
-    await kv.set("ranking_data", data);
+    // Save to Redis instead of file
+    const redis = await getRedisClient();
+    await redis.set("ranking_data", JSON.stringify(data));
 
     return NextResponse.json({ message: "Data saved successfully" });
   } catch (error: unknown) {

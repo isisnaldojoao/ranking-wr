@@ -1,17 +1,19 @@
 import { NextResponse } from "next/server";
-import { kv } from "@vercel/kv";
+import { getRedisClient } from "@/lib/redis";
 import fs from "fs";
 import path from "path";
 
 export async function GET() {
   try {
-    // Check if KV is configured
-    const isKVConfigured = process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN;
+    const isRedisConfigured = !!process.env.REDIS_URL;
     
-    // Try to get data from KV
     let players = null;
-    if (isKVConfigured) {
-      players = await kv.get("ranking_data");
+    if (isRedisConfigured) {
+      const redis = await getRedisClient();
+      const rawData = await redis.get("ranking_data");
+      if (rawData) {
+        players = JSON.parse(rawData);
+      }
     }
 
     if (players) {
