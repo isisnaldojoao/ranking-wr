@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { toast } from "sonner";
 
 interface Champion {
   name: string;
@@ -35,9 +36,9 @@ interface Player {
 export default function AdminPage() {
   const [players, setPlayers] = useState<Player[]>([]);
   const [file, setFile] = useState<File | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [status, setStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
-  const [showSuccess, setShowSuccess] = useState(false);
+  const [pageLoading, setPageLoading] = useState(true);
+  const [isUploading, setIsUploading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   // Use dynamic fetch to avoid webpack binding issues during data updates
   useEffect(() => {
@@ -51,7 +52,7 @@ export default function AdminPage() {
       } catch (err) {
         console.error("Failed to load admin data:", err);
       } finally {
-        setLoading(false);
+        setPageLoading(false);
       }
     }
     loadData();
@@ -59,8 +60,7 @@ export default function AdminPage() {
 
   const handleUpload = async () => {
     if (!file) return;
-    setLoading(true);
-    setStatus(null);
+    setIsUploading(true);
     const formData = new FormData();
     formData.append("file", file);
     try {
@@ -69,23 +69,22 @@ export default function AdminPage() {
       try {
         data = await res.json();
       } catch {
-        data = { error: "Erro interno do servidor (Resposta não-JSON)" };
+        data = { error: "Erro interno do servidor" };
       }
 
       if (res.ok) {
-        setStatus({ type: "success", message: `Sucesso! Planilha importada.` });
-        setShowSuccess(true);
+        toast.success("Sucesso! Planilha importada.");
         setTimeout(() => {
           window.location.reload();
-        }, 2000);
+        }, 1500);
       } else {
-        setStatus({ type: "error", message: data.error || `Erro ${res.status}: Problema ao processar.` });
+        toast.error(data.error || `Erro ${res.status}: Problema ao processar.`);
       }
     } catch (err) {
       console.error("Fetch error:", err);
-      setStatus({ type: "error", message: "Erro de conexão ou erro no servidor." });
+      toast.error("Erro de conexão ou no servidor.");
     } finally {
-      setLoading(false);
+      setIsUploading(false);
     }
   };
 
@@ -102,7 +101,7 @@ export default function AdminPage() {
   };
 
   const saveChanges = async () => {
-    setLoading(true);
+    setIsSaving(true);
     try {
       const res = await fetch("/api/save", {
         method: "POST",
@@ -110,42 +109,19 @@ export default function AdminPage() {
         body: JSON.stringify(players),
       });
       if (res.ok) {
-        setStatus({ type: "success", message: "Mudanças salvas com sucesso!" });
-        setShowSuccess(true);
-        setTimeout(() => setShowSuccess(false), 3000);
+        toast.success("Mudanças salvas com sucesso!");
       } else {
-        setStatus({ type: "error", message: "Erro ao salvar mudanças." });
+        toast.error("Erro ao salvar mudanças.");
       }
     } catch {
-      setStatus({ type: "error", message: "Erro de conexão." });
+      toast.error("Erro de conexão.");
     } finally {
-      setLoading(false);
+      setIsSaving(false);
     }
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
-
   return (
     <main className="min-h-screen bg-background text-foreground p-4 md:p-8 font-sans relative">
-      {/* Subtle Success Notification */}
-      {showSuccess && (
-        <div className="fixed top-4 right-4 z-[100] animate-slide-up">
-          <div className="bg-zinc-900 border border-emerald-500/50 px-6 py-4 rounded-xl shadow-2xl flex items-center gap-4">
-             <div className="w-8 h-8 bg-emerald-500/20 rounded-full flex items-center justify-center text-emerald-500">✓</div>
-             <div>
-               <p className="text-xs font-bold text-white uppercase tracking-tight">Dados Salvos</p>
-               <p className="text-[10px] text-zinc-500 uppercase">{status?.message}</p>
-             </div>
-          </div>
-        </div>
-      )}
-
       <div className="max-w-5xl mx-auto space-y-6">
         <header className="flex justify-between items-end border-b border-zinc-900 pb-4">
           <div>
@@ -172,14 +148,19 @@ export default function AdminPage() {
             />
             <button
               onClick={handleUpload}
-              disabled={!file || loading}
-              className="w-full py-2.5 bg-zinc-100 hover:bg-white disabled:bg-zinc-800 text-black rounded-lg text-[10px] font-bold uppercase transition-all"
+              disabled={!file || isUploading}
+              className="w-full py-2.5 bg-zinc-100 hover:bg-white disabled:bg-zinc-800 disabled:text-zinc-500 text-black rounded-lg text-[10px] font-bold uppercase transition-all flex items-center justify-center gap-2"
             >
-              {loading ? "Processando..." : "Importar"}
+              {isUploading ? (
+                <>
+                  <div className="w-3 h-3 border-2 border-black/20 border-t-black rounded-full animate-spin"></div>
+                  Salvando...
+                </>
+              ) : "Importar"}
             </button>
           </section>
 
-          {/* Quick Stats or Info could go here if needed, keeping it simple for now */}
+          {/* Info Section */}
           <section className="md:col-span-2 bg-zinc-900/30 border border-zinc-800 rounded-xl p-6 flex items-center justify-center text-center">
              <div className="space-y-1">
                <p className="text-[9px] font-bold text-zinc-600 uppercase tracking-widest leading-relaxed">
@@ -259,10 +240,11 @@ export default function AdminPage() {
         <div className="flex justify-end pt-4">
           <button
             onClick={saveChanges}
-            disabled={loading}
-            className="px-10 py-3 bg-blue-600 hover:bg-blue-500 disabled:bg-zinc-800 text-white rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all shadow-lg shadow-blue-500/10"
+            disabled={isSaving || isUploading}
+            className="px-10 py-3 bg-blue-600 hover:bg-blue-500 disabled:bg-zinc-800 text-white rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all shadow-lg shadow-blue-500/10 flex items-center gap-2"
           >
-            {loading ? "Salvando..." : "Salvar Alterações"}
+            {isSaving && <div className="w-3 h-3 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>}
+            {isSaving ? "Salvando..." : "Salvar Alterações"}
           </button>
         </div>
       </div>
