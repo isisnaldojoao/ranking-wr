@@ -8,8 +8,8 @@ export async function POST(req: NextRequest) {
     const file = formData.get("file") as File;
 
     if (!process.env.KV_REST_API_URL || !process.env.KV_REST_API_TOKEN) {
-      return NextResponse.json({ 
-        error: "Vercel KV não configurado. Por favor, conecte o Storage KV no painel da Vercel para que o upload funcione em produção." 
+      return NextResponse.json({
+        error: "Vercel KV não configurado!!! Por favor, conecte o Storage KV no painel da Vercel para que o upload funcione em produção."
       }, { status: 500 });
     }
 
@@ -132,8 +132,8 @@ export async function POST(req: NextRequest) {
   } catch (error: unknown) {
     console.error("Upload error detail:", error);
     const errorMessage = error instanceof Error ? error.message : "Erro desconhecido";
-    return NextResponse.json({ 
-      error: errorMessage 
+    return NextResponse.json({
+      error: errorMessage
     }, { status: 500 });
   }
 }
