@@ -43,7 +43,7 @@ export default function AdminPage() {
   useEffect(() => {
     async function loadData() {
       try {
-        const res = await fetch("/data/data.json", { cache: 'no-store' });
+        const res = await fetch("/api/data", { cache: 'no-store' });
         if (res.ok) {
           const data = await res.json();
           setPlayers(data);
@@ -118,135 +118,129 @@ export default function AdminPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0a0f16] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-indigo-500"></div>
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-600"></div>
       </div>
     );
   }
 
   return (
-    <main className="min-h-screen bg-[#0a0f16] text-white p-4 md:p-8 font-sans relative">
-      {/* Success Overlay */}
+    <main className="min-h-screen bg-background text-foreground p-4 md:p-8 font-sans relative">
+      {/* Subtle Success Notification */}
       {showSuccess && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm animate-fade-in">
-          <div className="bg-[#1c253d] border border-emerald-500/30 p-12 rounded-3xl shadow-[0_0_50px_rgba(16,185,129,0.2)] flex flex-col items-center gap-6 animate-scale-up">
-            <div className="w-24 h-24 bg-emerald-500 rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(16,185,129,0.5)]">
-              <span className="text-5xl">✓</span>
-            </div>
-            <div className="text-center">
-              <h2 className="text-3xl font-black uppercase tracking-tighter mb-2">Sucesso!</h2>
-              <p className="text-emerald-400 font-bold uppercase tracking-widest text-xs">{status?.message}</p>
-            </div>
+        <div className="fixed top-4 right-4 z-[100] animate-slide-up">
+          <div className="bg-zinc-900 border border-emerald-500/50 px-6 py-4 rounded-xl shadow-2xl flex items-center gap-4">
+             <div className="w-8 h-8 bg-emerald-500/20 rounded-full flex items-center justify-center text-emerald-500">✓</div>
+             <div>
+               <p className="text-xs font-bold text-white uppercase tracking-tight">Dados Salvos</p>
+               <p className="text-[10px] text-zinc-500 uppercase">{status?.message}</p>
+             </div>
           </div>
         </div>
       )}
-      <div className="max-w-7xl mx-auto space-y-8">
-        <header className="flex justify-between items-center">
+
+      <div className="max-w-5xl mx-auto space-y-6">
+        <header className="flex justify-between items-end border-b border-zinc-900 pb-4">
           <div>
-            <h1 className="text-3xl font-black italic tracking-tighter">DATA MANAGER</h1>
-            <p className="text-gray-500 text-xs uppercase font-bold tracking-widest mt-1">Edição manual e upload de planilhas</p>
+            <h1 className="text-xl font-bold tracking-tight uppercase text-white">Admin Panel</h1>
+            <p className="text-zinc-600 text-[9px] uppercase font-bold tracking-[0.2em] mt-0.5">Gestão de Dados do Ranking</p>
           </div>
-          <Link href="/" className="px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-xs font-black uppercase transition-all">
-            ← Ver Ranking
+          <Link href="/" className="px-4 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 rounded-lg text-[10px] font-bold uppercase transition-all">
+            ← Voltar
           </Link>
         </header>
 
-        {/* Upload Box */}
-        <section className="bg-white/5 border border-white/10 rounded-2xl p-6 flex flex-col md:flex-row items-center gap-6">
-          <div className="flex-1">
-            <h2 className="text-sm font-black uppercase mb-1">Upload de Planilha</h2>
-            <p className="text-xs text-gray-500 italic">Atualiza tudo de uma vez a partir do Excel.</p>
-          </div>
-          <input
-            type="file"
-            accept=".xlsx"
-            onChange={(e) => setFile(e.target.files?.[0] || null)}
-            className="text-xs file:bg-indigo-500 file:border-0 file:text-white file:px-3 file:py-1 file:rounded file:mr-3"
-          />
-          <button
-            onClick={handleUpload}
-            disabled={!file || loading}
-            className="px-6 py-2 bg-indigo-500 hover:bg-indigo-600 disabled:bg-gray-700 rounded-lg text-xs font-black uppercase transition-all"
-          >
-            {loading ? "..." : "Importar Excel"}
-          </button>
-        </section>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Upload Section */}
+          <section className="bg-zinc-900/30 border border-zinc-800 rounded-xl p-6 space-y-4">
+            <div>
+              <h2 className="text-xs font-bold uppercase text-zinc-400">Importar Excel</h2>
+              <p className="text-[9px] text-zinc-600 uppercase tracking-tight">Formato .xlsx</p>
+            </div>
+            <input
+              type="file"
+              accept=".xlsx"
+              onChange={(e) => setFile(e.target.files?.[0] || null)}
+              className="text-[10px] w-full text-zinc-400 file:bg-zinc-800 file:border-0 file:text-white file:px-3 file:py-1.5 file:rounded file:mr-3 file:text-[9px] file:font-bold file:uppercase"
+            />
+            <button
+              onClick={handleUpload}
+              disabled={!file || loading}
+              className="w-full py-2.5 bg-zinc-100 hover:bg-white disabled:bg-zinc-800 text-black rounded-lg text-[10px] font-bold uppercase transition-all"
+            >
+              {loading ? "Processando..." : "Importar"}
+            </button>
+          </section>
 
-        {/* Editable Table */}
-        <section className="bg-[#111622] border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+          {/* Quick Stats or Info could go here if needed, keeping it simple for now */}
+          <section className="md:col-span-2 bg-zinc-900/30 border border-zinc-800 rounded-xl p-6 flex items-center justify-center text-center">
+             <div className="space-y-1">
+               <p className="text-[9px] font-bold text-zinc-600 uppercase tracking-widest leading-relaxed">
+                 Edite os campos diretamente na tabela abaixo.<br/>
+                 As alterações são salvas apenas ao clicar no botão "Salvar".
+               </p>
+             </div>
+          </section>
+        </div>
+
+        {/* Minimalist Table */}
+        <section className="bg-black border border-zinc-800 rounded-xl overflow-hidden shadow-sm">
+          <div className="overflow-x-auto scrollbar-op">
+            <table className="w-full text-left border-collapse min-w-[800px]">
               <thead>
-                <tr className="bg-white/5 text-[10px] font-black text-gray-500 uppercase tracking-widest">
+                <tr className="bg-zinc-900/50 text-[9px] font-bold text-zinc-500 uppercase tracking-widest border-b border-zinc-800">
                   <th className="px-6 py-4">Jogador</th>
                   <th className="px-4 py-4">Elo</th>
-                  <th className="px-4 py-4">Partidas</th>
-                  <th className="px-4 py-4">WinRate (%)</th>
-                  <th className="px-4 py-4">MVP</th>
-                  <th className="px-4 py-4">Penta</th>
-                  <th className="px-4 py-4">Main Champ</th>
-                  <th className="px-4 py-4">Ação</th>
+                  <th className="px-4 py-4 text-center">Jogos</th>
+                  <th className="px-4 py-4 text-center">WR (%)</th>
+                  <th className="px-4 py-4 text-center">MVP</th>
+                  <th className="px-4 py-4">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5">
+              <tbody className="divide-y divide-zinc-900">
                 {players.map((player, idx) => (
-                  <tr key={player.id} className="hover:bg-white/[0.02] transition-colors">
-                    <td className="px-6 py-4">
+                  <tr key={player.id} className="hover:bg-zinc-900/20 transition-colors">
+                    <td className="px-6 py-3">
                       <input
                         value={player.name}
                         onChange={(e) => handleEdit(idx, "name", e.target.value)}
-                        className="bg-transparent border-b border-transparent focus:border-indigo-500 outline-none w-32 font-bold uppercase transition-all"
+                        className="bg-transparent border-b border-transparent focus:border-blue-500 outline-none w-full font-bold uppercase text-zinc-200 transition-all text-sm"
                       />
                     </td>
-                    <td className="px-4 py-4">
+                    <td className="px-4 py-3">
                       <input
                         value={player.rank}
                         onChange={(e) => handleEdit(idx, "rank", e.target.value)}
-                        className="bg-transparent border-b border-transparent focus:border-indigo-500 outline-none w-28 text-sm transition-all"
+                        className="bg-transparent border-b border-transparent focus:border-blue-500 outline-none w-full text-xs font-bold text-zinc-400"
                       />
                     </td>
-                    <td className="px-4 py-4">
+                    <td className="px-4 py-3 text-center">
                       <input
                         type="number"
                         value={player.matches}
                         onChange={(e) => handleEdit(idx, "matches", parseInt(e.target.value))}
-                        className="bg-transparent border-b border-transparent focus:border-indigo-500 outline-none w-16 text-sm transition-all"
+                        className="bg-transparent text-center border-b border-transparent focus:border-blue-500 outline-none w-16 text-xs font-bold text-zinc-500"
                       />
                     </td>
-                    <td className="px-4 py-4">
+                    <td className="px-4 py-3 text-center">
                       <input
                         type="number"
                         step="0.1"
                         value={player.winRate}
                         onChange={(e) => handleEdit(idx, "winRate", parseFloat(e.target.value))}
-                        className="bg-transparent border-b border-transparent focus:border-indigo-500 outline-none w-16 text-sm transition-all font-mono"
+                        className="bg-transparent text-center border-b border-transparent focus:border-blue-500 outline-none w-16 text-xs font-bold text-blue-500"
                       />
                     </td>
-                    <td className="px-4 py-4 text-center">
+                    <td className="px-4 py-3 text-center">
                       <input
                         type="number"
                         value={player.stats.mvp}
                         onChange={(e) => handleEdit(idx, "stats", parseInt(e.target.value), "mvp")}
-                        className="bg-transparent border-b border-transparent focus:border-indigo-500 outline-none w-12 text-sm text-center"
+                        className="bg-transparent text-center border-b border-transparent focus:border-blue-500 outline-none w-12 text-xs font-bold text-zinc-500"
                       />
                     </td>
-                    <td className="px-4 py-4 text-center">
-                      <input
-                        type="number"
-                        value={player.stats.penta}
-                        onChange={(e) => handleEdit(idx, "stats", parseInt(e.target.value), "penta")}
-                        className="bg-transparent border-b border-transparent focus:border-indigo-500 outline-none w-12 text-sm text-center"
-                      />
-                    </td>
-                    <td className="px-4 py-4">
-                      <input
-                        value={player.mainChampion.name}
-                        onChange={(e) => handleEdit(idx, "mainChampion", e.target.value, "name")}
-                        className="bg-transparent border-b border-transparent focus:border-indigo-500 outline-none w-24 text-sm font-semibold"
-                      />
-                    </td>
-                    <td className="px-4 py-4 text-xs italic text-gray-700">
-                       Disponível
+                    <td className="px-4 py-3 text-[9px] font-bold text-zinc-800 uppercase italic-none">
+                       Ok
                     </td>
                   </tr>
                 ))}
@@ -255,22 +249,15 @@ export default function AdminPage() {
           </div>
         </section>
 
-        <footer className="flex justify-between items-center py-6">
-          {status && (
-            <div className={`px-4 py-2 rounded-lg text-xs font-black uppercase ${
-              status.type === "success" ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-red-500/10 text-red-400 border border-red-500/20"
-            }`}>
-              {status.message}
-            </div>
-          )}
+        <div className="flex justify-end pt-4">
           <button
             onClick={saveChanges}
             disabled={loading}
-            className="ml-auto px-10 py-4 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 rounded-xl text-sm font-black uppercase tracking-widest shadow-lg shadow-emerald-500/20 transition-all hover:scale-105 active:scale-95"
+            className="px-10 py-3 bg-blue-600 hover:bg-blue-500 disabled:bg-zinc-800 text-white rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all shadow-lg shadow-blue-500/10"
           >
-            {loading ? "Salvando..." : "Salvar Todas as Mudanças"}
+            {loading ? "Salvando..." : "Salvar Alterações"}
           </button>
-        </footer>
+        </div>
       </div>
     </main>
   );

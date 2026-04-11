@@ -1,17 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
+import { kv } from "@vercel/kv";
 
 export async function POST(req: NextRequest) {
   try {
     const data = await req.json();
 
-    if (!Array.isArray(data)) {
-      return NextResponse.json({ error: "Invalid data format" }, { status: 400 });
+    if (!process.env.KV_REST_API_URL || !process.env.KV_REST_API_TOKEN) {
+      return NextResponse.json({ 
+        error: "Vercel KV não configurado. Por favor, conecte o Storage KV no painel da Vercel." 
+      }, { status: 500 });
     }
 
-    const outputPath = path.join(process.cwd(), "public", "data", "data.json");
-    fs.writeFileSync(outputPath, JSON.stringify(data, null, 2));
+    // Save to Vercel KV instead of file
+    await kv.set("ranking_data", data);
 
     return NextResponse.json({ message: "Data saved successfully" });
   } catch (error: unknown) {

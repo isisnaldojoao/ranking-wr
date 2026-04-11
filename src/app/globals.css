@@ -1,12 +1,12 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0a0e1a;
-  --foreground: #ffffff;
-  --op-blue: #1c253d;
-  --op-border: #232c45;
-  --op-accent: #5383e8;
-  --op-gold: #cba864;
+  --background: #09090b; /* Zinc 950 - minimalist neutral dark */
+  --foreground: #fafafa;
+  --card: #09090b;
+  --card-border: #27272a; /* Zinc 800 - subtle border */
+  --primary: #3b82f6;
+  --muted: #a1a1aa;
 }
 
 @theme inline {
@@ -22,38 +22,34 @@ body {
 
 @layer utilities {
   .glass-op {
-    @apply backdrop-blur-md bg-white/[0.03] border border-white/10;
+    @apply bg-black/40 border border-white/5 backdrop-blur-sm;
   }
   
   .card-op {
-    @apply bg-[#1c253d] border border-[#232c45] rounded-xl;
+    @apply bg-zinc-950 border border-zinc-800 rounded-xl;
   }
 
   .text-op-blue {
-    color: #5383e8;
-  }
-
-  .bg-op-blue {
-    background-color: #5383e8;
+    color: var(--primary);
   }
 
   .scrollbar-op::-webkit-scrollbar {
-    width: 6px;
+    width: 4px;
   }
   .scrollbar-op::-webkit-scrollbar-track {
     background: transparent;
   }
   .scrollbar-op::-webkit-scrollbar-thumb {
-    background: #232c45;
+    background: #27272a;
     border-radius: 10px;
   }
 }
 
 @keyframes slide-up {
-  from { transform: translateY(10px); opacity: 0; }
+  from { transform: translateY(5px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
 }
 
 .animate-slide-up {
-  animation: slide-up 0.4s ease-out forwards;
+  animation: slide-up 0.3s ease-out forwards;
 }

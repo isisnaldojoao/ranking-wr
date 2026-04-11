@@ -42,7 +42,7 @@ export default function Home() {
   useEffect(() => {
     async function loadData() {
       try {
-        const res = await fetch("/data/data.json", { cache: 'no-store' });
+        const res = await fetch("/api/data", { cache: 'no-store' });
         const data = await res.json();
         setPlayers(data);
       } catch (err) {
@@ -75,135 +75,160 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0a0e1a] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#5383e8]"></div>
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
       </div>
     );
   }
 
   return (
-    <main className="min-h-screen bg-[#0a0e1a] text-white font-sans selection:bg-[#5383e8]/30">
-      <nav className="bg-[#1c253d] border-b border-[#232c45] px-6 py-4 flex items-center justify-between shadow-lg sticky top-0 z-50">
+    <main className="min-h-screen bg-background text-foreground font-sans selection:bg-blue-900/30">
+      <nav className="bg-black border-b border-zinc-800 px-4 md:px-8 py-4 flex items-center justify-between shadow-sm sticky top-0 z-50">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-[#5383e8] rounded flex items-center justify-center font-black text-white italic">WR</div>
-          <h1 className="text-xl font-black tracking-tighter uppercase italic">
-            WildRift.<span className="text-[#5383e8]">GG</span>
+          <div className="w-8 h-8 bg-zinc-800 rounded flex items-center justify-center font-bold text-white text-xs">WR</div>
+          <h1 className="text-sm font-bold tracking-tight uppercase leading-none">
+            WildRift.<span className="text-blue-500">GG</span>
           </h1>
         </div>
         
         <div className="flex items-center gap-6">
-          <Link href="/admin" className="text-xs font-bold text-gray-400 hover:text-white transition-colors uppercase tracking-widest">
-            Painel Admin
+          <Link href="/admin" className="text-[10px] font-bold text-zinc-500 hover:text-white transition-colors uppercase tracking-widest">
+            Admin
           </Link>
-          <div className="relative group hidden md:block">
+          <div className="relative group hidden sm:block">
             <input
               type="text"
-              placeholder="Buscar invocador..."
+              placeholder="Buscar..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="bg-[#0a0e1a] border border-[#232c45] rounded-md px-4 py-2 text-sm outline-none focus:ring-1 focus:ring-[#5383e8] w-64 transition-all"
+              className="bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-1.5 text-xs outline-none focus:border-blue-500 w-40 transition-all text-zinc-300"
             />
-            <span className="absolute right-3 top-2.5 opacity-30">🔍</span>
           </div>
         </div>
       </nav>
 
-      <div className="max-w-7xl mx-auto p-4 md:p-8 space-y-8 animate-slide-up">
+      <div className="max-w-5xl mx-auto p-4 md:p-8 space-y-8 animate-slide-up">
         
-        <section className="bg-gradient-to-r from-[#1c253d] to-[#12192b] border border-[#232c45] rounded-2xl p-8 flex flex-col md:flex-row items-center justify-between gap-8 shadow-2xl relative overflow-hidden">
-          <div className="flex flex-col gap-1 items-center md:items-start relative z-10">
-            <h2 className="text-4xl font-black tracking-tighter uppercase mb-2">Ladder Ranking</h2>
-            <div className="flex items-center gap-3 text-xs font-bold uppercase tracking-widest text-[#5383e8]">
-              <span className="bg-[#5383e8]/10 px-2 py-1 rounded">Season 2026</span>
-              <span className="text-white/20">•</span>
-              <span>Servidor BR</span>
-            </div>
+        {/* Simple Header */}
+        <header className="py-2 border-b border-zinc-900">
+          <h2 className="text-2xl font-bold tracking-tight text-white uppercase">Ladder Ranking</h2>
+          <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-500 mt-1">
+            <span>Brasil</span>
+            <span className="text-zinc-800">•</span>
+            <span>Season 2026</span>
           </div>
+        </header>
+
+        {/* Content Section */}
+        <div className="space-y-4">
           
-          <div className="flex gap-12 text-center md:text-left relative z-10">
-            <div>
-              <div className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Total de Players</div>
-              <div className="text-2xl font-black">{players.length}</div>
-            </div>
-            <div>
-              <div className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Invocador #1</div>
-              <div className="text-2xl font-black text-emerald-400 truncate max-w-[150px]">{players[0]?.name}</div>
-            </div>
+          {/* Mobile View: Simple Cards */}
+          <div className="grid grid-cols-1 gap-3 md:hidden">
+            {filteredPlayers.map((player, index) => (
+              <div 
+                key={player.id} 
+                onClick={() => setExpandedId(expandedId === player.id ? null : player.id)}
+                className={`bg-zinc-900/50 border rounded-xl p-4 transition-all ${
+                  expandedId === player.id ? "border-blue-500/50 bg-zinc-900" : "border-zinc-800"
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm font-bold text-zinc-700 w-6">{index + 1}</span>
+                    <div className="w-10 h-10 rounded-lg overflow-hidden border border-zinc-800">
+                      <img 
+                        src={getChampAsset(player.mainChampion.name)} 
+                        alt="" 
+                        className="w-full h-full object-cover grayscale-[0.3]"
+                        onError={(e) => (e.currentTarget.src = "https://ddragon.leagueoflegends.com/cdn/14.5.1/img/profileicon/29.png")}
+                      />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="font-bold text-zinc-200 text-sm leading-tight">{player.name}</span>
+                      <span className={`text-[9px] font-bold uppercase tracking-tighter ${getRankColor(player.rank)}`}>{player.rank}</span>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-sm font-bold text-white">{player.winRate}%</div>
+                  </div>
+                </div>
+
+                {expandedId === player.id && (
+                  <div className="pt-4 mt-4 border-t border-zinc-800 space-y-4 animate-slide-up">
+                    <div className="grid grid-cols-2 gap-2">
+                       <StatItem label="MVP" value={player.stats.mvp} color="text-zinc-100" />
+                       <StatItem label="Lendário" value={player.stats.lendario} color="text-zinc-100" />
+                    </div>
+                    <div className="flex gap-2 overflow-x-auto pb-1">
+                       {player.allChampions.slice(0, 3).map((champ, i) => (
+                         <div key={i} className="flex-shrink-0 bg-black/40 border border-zinc-800 p-1.5 rounded-lg flex items-center gap-2 pr-3">
+                            <img src={getChampAsset(champ.name)} alt="" className="w-5 h-5 rounded grayscale-[0.2]" />
+                            <span className="text-[9px] font-bold uppercase text-zinc-400">{champ.name}</span>
+                         </div>
+                       ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
 
-          <div className="absolute top-0 right-0 w-64 h-64 bg-[#5383e8]/5 blur-[100px] rounded-full -mr-32 -mt-32"></div>
-        </section>
-
-        <div className="bg-[#1c253d] border border-[#232c45] rounded-2xl overflow-hidden shadow-2xl">
-          <div className="overflow-x-auto">
+          {/* Desktop View: Simple Table */}
+          <div className="hidden md:block bg-black border border-zinc-800 rounded-xl overflow-hidden shadow-sm">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-[#12192b] text-[10px] font-black text-gray-500 uppercase tracking-widest border-b border-[#232c45]">
-                  <th className="px-8 py-5 w-24">Pos</th>
-                  <th className="px-4 py-5">Invocador</th>
-                  <th className="px-4 py-5">Tier</th>
-                  <th className="px-4 py-5 text-center">Jogos</th>
-                  <th className="px-4 py-5">WinRate</th>
-                  <th className="px-4 py-5">Top Champ</th>
-                  <th className="px-8 py-5 text-right">Ações</th>
+                <tr className="bg-zinc-900/50 text-[9px] font-bold text-zinc-500 uppercase tracking-widest border-b border-zinc-800">
+                  <th className="px-6 py-4 w-20">#</th>
+                  <th className="px-4 py-4">Invocador</th>
+                  <th className="px-4 py-4">Tier</th>
+                  <th className="px-4 py-4 text-center">Jogos</th>
+                  <th className="px-4 py-4">Win Rate</th>
+                  <th className="px-8 py-4 text-right">Ação</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#232c45]/30">
+              <tbody className="divide-y divide-zinc-900">
                 {filteredPlayers.map((player, index) => (
                   <Fragment key={player.id}>
                     <tr 
-                      key={player.id} 
                       onClick={() => setExpandedId(expandedId === player.id ? null : player.id)}
-                      className={`hover:bg-[#232c45]/40 transition-all duration-300 group cursor-pointer ${
-                        expandedId === player.id ? "bg-[#232c45]/50" : ""
+                      className={`hover:bg-zinc-900/30 transition-colors group cursor-pointer ${
+                        expandedId === player.id ? "bg-zinc-900/50" : ""
                       }`}
                     >
-                      <td className="px-8 py-5 font-black text-lg italic text-[#5383e8]/50 group-hover:text-[#5383e8] transition-colors relative">
-                        {index + 1}
-                        {index < 3 && (
-                          <div className={`absolute top-1/2 -translate-y-1/2 left-2 w-1 h-8 rounded-full ${
-                            index === 0 ? "bg-yellow-500 shadow-[0_0_10px_#eab308]" : 
-                            index === 1 ? "bg-gray-400 shadow-[0_0_10px_#9ca3af]" : 
-                            "bg-amber-600 shadow-[0_0_10px_#d97706]"
-                          }`} />
-                        )}
-                      </td>
+                      <td className="px-6 py-5 font-bold text-zinc-700 text-sm">{index + 1}</td>
 
                       <td className="px-4 py-5">
-                        <div className="flex items-center gap-4">
-                          <div className="w-10 h-10 rounded-lg overflow-hidden border-2 border-[#232c45] group-hover:border-[#5383e8] transition-all bg-black/40">
-                             <img 
+                        <div className="flex items-center gap-3">
+                          <div className="w-9 h-9 rounded-lg overflow-hidden border border-zinc-800">
+                            <img 
                               src={getChampAsset(player.mainChampion.name)} 
                               alt="" 
-                              className="w-full h-full object-cover scale-110"
+                              className="w-full h-full object-cover grayscale-[0.2]"
                               onError={(e) => (e.currentTarget.src = "https://ddragon.leagueoflegends.com/cdn/14.5.1/img/profileicon/29.png")}
                             />
                           </div>
                           <div className="flex flex-col">
-                            <span className="font-bold text-gray-100 uppercase group-hover:text-white transition-colors">{player.name}</span>
-                            <span className="text-[9px] text-gray-500 font-bold uppercase tracking-widest flex items-center gap-1">
-                              {index === 0 && <span className="text-yellow-500">🥇 Top Tier</span>}
-                              #ID-{1000 + player.id}
-                            </span>
+                            <span className="font-bold text-zinc-200 group-hover:text-blue-500 transition-colors uppercase text-sm tracking-tight">{player.name}</span>
+                            <span className="text-[8px] text-zinc-600 font-bold uppercase">#ID-{1000 + player.id}</span>
                           </div>
                         </div>
                       </td>
 
                       <td className="px-4 py-5">
-                        <span className={`font-bold uppercase text-[11px] tracking-tight ${getRankColor(player.rank)}`}>
+                        <span className={`font-bold uppercase text-[9px] tracking-widest ${getRankColor(player.rank)}`}>
                           {player.rank}
                         </span>
                       </td>
 
-                      <td className="px-4 py-5 text-center font-bold text-gray-300 text-sm">{player.matches}</td>
+                      <td className="px-4 py-5 text-center font-bold text-zinc-400 text-sm">{player.matches}</td>
 
                       <td className="px-4 py-5">
                         <div className="flex flex-col gap-1 w-24">
-                          <div className="text-[11px] font-black">{player.winRate}%</div>
-                          <div className="h-1 bg-black/30 rounded-full overflow-hidden">
+                          <div className="text-[10px] font-bold text-zinc-300">{player.winRate}%</div>
+                          <div className="h-1 bg-zinc-800 rounded-full overflow-hidden">
                             <div 
-                              className={`h-full transition-all duration-1000 ${
-                                player.winRate >= 50 ? "bg-[#5383e8]" : "bg-red-500"
+                              className={`h-full transition-all duration-700 ${
+                                player.winRate >= 50 ? "bg-blue-600" : "bg-zinc-700"
                               }`}
                               style={{ width: `${player.winRate}%` }}
                             />
@@ -211,66 +236,39 @@ export default function Home() {
                         </div>
                       </td>
 
-                      <td className="px-4 py-5">
-                        <div className="flex items-center gap-3">
-                           <span className="text-xs font-semibold text-gray-400 group-hover:text-gray-200 transition-colors">{player.mainChampion.name}</span>
-                        </div>
-                      </td>
-
-                      <td className="px-8 py-5 text-right">
-                        <button className="text-xs font-black uppercase text-gray-600 group-hover:text-[#5383e8] tracking-widest transition-all">
-                          {expandedId === player.id ? "Fechar" : "Detalhes"}
-                        </button>
+                      <td className="px-8 py-5 text-right font-bold text-[10px] text-zinc-600 uppercase tracking-widest group-hover:text-white transition-all">
+                        {expandedId === player.id ? "Recolher" : "Ver"}
                       </td>
                     </tr>
 
-                    {/* Expandable Section */}
+                    {/* Stats Section Desktop */}
                     {expandedId === player.id && (
-                      <tr>
-                        <td colSpan={7} className="px-8 py-8 bg-[#12192b]/50 border-y border-[#232c45]/20 animate-slide-up">
-                          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                            
-                            {/* Detailed Stats Grid */}
+                      <tr className="bg-zinc-950/50">
+                        <td colSpan={6} className="px-8 py-8 animate-slide-up border-y border-zinc-900">
+                          <div className="grid grid-cols-3 gap-12">
                             <div className="space-y-4">
-                              <h3 className="text-[10px] font-black text-[#5383e8] uppercase tracking-widest">Estatísticas de Combate</h3>
+                              <h3 className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">Estatísticas</h3>
                               <div className="grid grid-cols-2 gap-3">
-                                <StatItem label="MVP" value={player.stats.mvp} color="text-[#cba864]" />
-                                <StatItem label="Lendário" value={player.stats.lendario} color="text-red-500" />
-                                <StatItem label="S-Rank" value={player.stats.s} color="text-cyan-400" />
-                                <StatItem label="A-Rank" value={player.stats.a} color="text-teal-400" />
-                                <StatItem label="First Blood" value={player.stats.firstBlood} color="text-orange-400" />
+                                <StatItem label="MVP" value={player.stats.mvp} color="text-zinc-100" />
+                                <StatItem label="Penta" value={player.stats.penta} color="text-zinc-100" />
+                                <StatItem label="S-Rank" value={player.stats.s} color="text-zinc-100" />
+                                <StatItem label="Lendário" value={player.stats.lendario} color="text-zinc-100" />
                               </div>
                             </div>
-
-                            {/* Multi-kills */}
-                            <div className="space-y-4">
-                              <h3 className="text-[10px] font-black text-[#5383e8] uppercase tracking-widest">Multi-Kills</h3>
+                            <div className="space-y-4 col-span-2">
+                              <h3 className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">Campeões Recentes</h3>
                               <div className="flex flex-wrap gap-2">
-                                <BadgeLarge label="Penta" count={player.stats.penta} color="bg-red-600" />
-                                <BadgeLarge label="Quadra" count={player.stats.quadra} color="bg-orange-500" />
-                                <BadgeLarge label="Triple" count={player.stats.triple} color="bg-indigo-500" />
-                              </div>
-                            </div>
-
-                            {/* All Champions */}
-                            <div className="space-y-4">
-                              <h3 className="text-[10px] font-black text-[#5383e8] uppercase tracking-widest">Pool de Campeões</h3>
-                              <div className="flex flex-col gap-2 max-h-48 overflow-y-auto pr-2 scrollbar-op">
                                 {player.allChampions.map((champ, i) => (
-                                  <div key={i} className="flex items-center justify-between text-xs bg-black/20 p-2 rounded-lg border border-white/5">
-                                    <div className="flex items-center gap-2">
-                                      <img src={getChampAsset(champ.name)} alt="" className="w-5 h-5 rounded" onError={(e) => (e.currentTarget.style.display='none')} />
-                                      <span className="font-bold">{champ.name}</span>
-                                    </div>
-                                    <div className="flex gap-4">
-                                      <span className="text-gray-500 uppercase text-[9px]">Lvl {champ.level}</span>
-                                      <span className="text-[#5383e8] font-black">{champ.winRate}</span>
+                                  <div key={i} className="flex items-center gap-2 bg-zinc-900 border border-zinc-800 p-2 rounded-lg pr-4">
+                                    <img src={getChampAsset(champ.name)} alt="" className="w-5 h-5 rounded" />
+                                    <div className="flex flex-col">
+                                      <span className="text-[10px] font-bold uppercase text-zinc-200">{champ.name}</span>
+                                      <span className="text-[8px] font-bold text-blue-500">{champ.winRate} WR</span>
                                     </div>
                                   </div>
                                 ))}
                               </div>
                             </div>
-
                           </div>
                         </td>
                       </tr>
@@ -282,14 +280,11 @@ export default function Home() {
           </div>
         </div>
 
-        <footer className="footer-op border-t border-[#232c45] py-12 flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="flex items-center gap-2 grayscale opacity-50">
-             <div className="w-8 h-8 bg-[#5383e8] rounded flex items-center justify-center font-black text-white italic">WR</div>
-              <h1 className="text-xl font-black tracking-tighter uppercase italic">WildRift.GG</h1>
+        <footer className="pt-12 border-t border-zinc-900/50 flex flex-col md:flex-row justify-between items-center gap-4 text-center">
+          <div className="text-zinc-700 text-[10px] font-bold uppercase tracking-widest">WildRift.GG Ranking System</div>
+          <div className="text-zinc-800 text-[9px] font-bold uppercase tracking-[0.2em]">
+            Data by Riot • Powered by Antigravity
           </div>
-          <p className="text-[10px] text-gray-700 font-bold tracking-widest uppercase text-center md:text-right">
-            © 2026 Developed with Antigravity • Data by Riot Games • <Link href="/admin" className="text-gray-500 hover:text-white">Admin</Link>
-          </p>
         </footer>
 
       </div>
@@ -299,18 +294,18 @@ export default function Home() {
 
 function StatItem({ label, value, color }: { label: string, value: number, color: string }) {
   return (
-    <div className="bg-black/20 p-3 rounded-xl border border-white/5 flex flex-col gap-1">
-      <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest">{label}</span>
-      <span className={`text-xl font-black ${color}`}>{value}</span>
+    <div className="bg-zinc-900 border border-zinc-800 p-3 rounded-lg flex flex-col gap-0.5">
+      <span className="text-[8px] font-bold text-zinc-600 uppercase tracking-wider">{label}</span>
+      <span className={`text-lg font-bold ${color}`}>{value}</span>
     </div>
   );
 }
 
 function BadgeLarge({ label, count, color }: { label: string, count: number, color: string }) {
   return (
-    <div className={`${color} p-4 rounded-2xl flex flex-col items-center justify-center min-w-[80px] shadow-lg shadow-black/40`}>
-      <span className="text-[9px] font-black uppercase tracking-widest text-white/60 mb-1">{label}</span>
-      <span className="text-2xl font-black">{count || 0}</span>
+    <div className={`${color} p-4 rounded-xl flex flex-col items-center justify-center min-w-[80px]`}>
+      <span className="text-[8px] font-bold uppercase tracking-widest text-white/40 mb-1">{label}</span>
+      <span className="text-2xl font-bold text-white">{count || 0}</span>
     </div>
   );
 }

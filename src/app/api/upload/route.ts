@@ -1,13 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
+import { kv } from "@vercel/kv";
 import * as XLSX from "xlsx";
-import fs from "fs";
-import path from "path";
-import os from "os";
 
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
     const file = formData.get("file") as File;
+
+    if (!process.env.KV_REST_API_URL || !process.env.KV_REST_API_TOKEN) {
+      return NextResponse.json({ 
+        error: "Vercel KV não configurado. Por favor, conecte o Storage KV no painel da Vercel para que o upload funcione em produção." 
+      }, { status: 500 });
+    }
 
     if (!file) {
       return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
@@ -119,27 +123,17 @@ export async function POST(req: NextRequest) {
 
     players.forEach((p, i) => p.id = i + 1);
 
-    const outputPath = path.join(process.cwd(), "public", "data", "data.json");
-    console.log("Saving processed data to:", outputPath);
-    
-    // Ensure the directory exists (just in case)
-    const outputDir = path.dirname(outputPath);
-    if (!fs.existsSync(outputDir)) {
-      console.log("Creating output directory:", outputDir);
-      fs.mkdirSync(outputDir, { recursive: true });
-    }
-
-    fs.writeFileSync(outputPath, JSON.stringify(players, null, 2));
+    // Save to Vercel KV instead of file
+    console.log("Saving processed data to Vercel KV...");
+    await kv.set("ranking_data", players);
 
     console.log("Upload success!");
     return NextResponse.json({ message: "File processed successfully", count: players.length });
   } catch (error: unknown) {
     console.error("Upload error detail:", error);
     const errorMessage = error instanceof Error ? error.message : "Erro desconhecido";
-    const errorStack = error instanceof Error ? error.stack : undefined;
     return NextResponse.json({ 
-      error: errorMessage, 
-      stack: process.env.NODE_ENV === 'development' ? errorStack : undefined 
+      error: errorMessage 
     }, { status: 500 });
   }
 }
